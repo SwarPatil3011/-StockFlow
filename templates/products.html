@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Products - StockFlow</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
+    </head>
+    <body>
+
+        <div class="navbar">
+    <a href="/" style="color:white; text-decoration:none;">Dashboard</a> |
+    <a href="/products" style="color:white; text-decoration:none;">Products</a>
+</div>
+
+        <div class="container">
+
+    <!-- Heading Card -->
+    <div class="card">
+        <h2>Products Page 📦</h2>
+    </div>
+
+    <!-- 🔍 SEARCH FORM GOES HERE -->
+    <div class="card">
+        <form method="GET" action="/products">
+            <input type="text" name="search" placeholder="Search product name">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <!-- 🔹 ADD PRODUCT FORM HERE -->
+     <div class="card">
+     <h3>Add New Product</h3>
+     <form method="POST" action="/add_product">
+        <input type="text" name="name" placeholder="Product Name" required><br><br>
+        <input type="number" name="price" placeholder="Price" required><br><br>
+        <input type="number" name="quantity" placeholder="Quantity" required><br><br>
+        <button type="submit">Add Product</button>
+     </form>
+     </div>
+
+{% for product in products %}
+<div class="card">
+    <h3>{{ product.name }}</h3>
+    <p>Price: ₹ {{ product.price }}</p>
+    <p>Quantity: {{ product.quantity }}</p>
+
+    <a href="/edit_product/{{ product.id }}">
+        <button style="background-color:orange; color:white;">
+            Edit
+        </button>
+    </a>
+
+    <form method="POST" action="/delete_product/{{ product.id }}">
+        <button type="submit" style="background-color:red; color:white;">
+            Delete
+        </button>
+    </form>
+</div>
+{% endfor %}
+</div>
+    </body>
+</html>
