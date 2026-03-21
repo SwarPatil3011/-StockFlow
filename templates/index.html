@@ -6,9 +6,20 @@
 </head>
 <body>
 
-    <div class="navbar">
-    <a href="/" style="color:white; text-decoration:none;">Dashboard</a> |
-    <a href="/products" style="color:white; text-decoration:none;">Products</a>
+<div class="navbar">
+
+    <!-- LEFT SIDE -->
+    <span>
+        <a href="/dashboard" style="color:white; text-decoration:none;">Dashboard</a> |
+        <a href="/products" style="color:white; text-decoration:none;">Products</a>
+    </span>
+
+    <!-- RIGHT SIDE -->
+    <span style="float:right;">
+        Welcome, {{ session['user'] }} |
+        <a href="/logout" style="color:red; text-decoration:none;">Logout</a>
+    </span>
+
 </div>
 
     <div class="container">

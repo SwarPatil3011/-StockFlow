@@ -1,6 +1,6 @@
 import mysql.connector
 
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session
 
 db = mysql.connector.connect(
     host="localhost",
@@ -11,31 +11,53 @@ db = mysql.connector.connect(
 
 cursor = db.cursor(dictionary=True)
 app = Flask(__name__)
+app.secret_key = "secret123"
 
 @app.route("/")
 def home():
+    return redirect('/login')
+
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    if 'user' in session:
+        return redirect('/dashboard')
+
+    if request.method == 'POST':
+        username = request.form["username"]
+        password = request.form["password"]
+
+        cursor.execute(
+            "SELECT * FROM users WHERE username=%s AND password=%s",
+            (username, password)
+        )
+
+        user = cursor.fetchone()
+
+        if user:
+            session['user'] = username
+            return redirect('/dashboard')
+        else:
+            return "Wrong username or password"
+
     return render_template("login.html")
 
-@app.route("/login", methods=["POST"])
-def login():
+@app.route('/dashboard')
+def dashboard():
+    if 'user' not in session:
+        return redirect('/login')
 
-    username = request.form["username"]
-    password = request.form["password"]
+    return render_template('index.html')
 
-    cursor.execute(
-        "SELECT * FROM users WHERE username=%s AND password=%s",
-        (username, password)
-    )
-
-    user = cursor.fetchone()
-
-    if user:
-        return render_template("index.html")
-    else:
-        return "Wrong username or password"
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect('/login')
 
 @app.route("/products")
 def products():
+    if 'user' not in session:
+        return redirect('/login')
+    
     search = request.args.get("search")
 
     if search:
@@ -51,12 +73,18 @@ def products():
 
 @app.route("/delete_product/<int:id>", methods=["POST"])
 def delete_product(id):
+    if 'user' not in session:
+        return redirect('/login')
+    
     cursor.execute("DELETE FROM products WHERE id = %s", (id,))
     db.commit()
     return redirect("/products")
 
 @app.route("/add_product", methods=["POST"])
 def add_product():
+    if 'user' not in session:
+        return redirect('/login')
+    
     name = request.form["name"]
     price = request.form["price"]
     quantity = request.form["quantity"]
@@ -71,12 +99,18 @@ def add_product():
 
 @app.route("/edit_product/<int:id>")
 def edit_product(id):
+    if 'user' not in session:
+        return redirect('/login')
+    
     cursor.execute("SELECT * FROM products WHERE id = %s", (id,))
     product = cursor.fetchone()
     return render_template("edit_product.html", product=product)
 
 @app.route("/update_product/<int:id>", methods=["POST"])
 def update_product(id):
+    if 'user' not in session:
+        return redirect('/login')
+    
     name = request.form["name"]
     price = request.form["price"]
     quantity = request.form["quantity"]
@@ -89,5 +123,48 @@ def update_product(id):
 
     return redirect("/products")
 
+@app.route('/billing', methods=['GET', 'POST'])
+def billing():
+    if 'user' not in session:
+        return redirect('/login')
+
+    cursor.execute("SELECT * FROM products")
+    products = cursor.fetchall()
+
+    total = None
+    message = None
+
+    if request.method == 'POST':
+        product_id = request.form['product_id']
+        quantity = int(request.form['quantity'])
+
+        # get price + stock
+        cursor.execute("SELECT price, stock FROM products WHERE id=%s", (product_id,))
+        data = cursor.fetchone()
+
+        price = data[0]
+        stock = data[1]
+
+        # ❗ check stock
+        if quantity > stock:
+            message = "Not enough stock available!"
+        else:
+            total = price * quantity
+
+            # 🔥 reduce stock
+            new_stock = stock - quantity
+            cursor.execute("UPDATE products SET stock=%s WHERE id=%s", (new_stock, product_id))
+
+            # 🔥 save bill (we create table next)
+            cursor.execute(
+                "INSERT INTO bills (product_id, quantity, total) VALUES (%s, %s, %s)",
+                (product_id, quantity, total)
+            )
+
+            db.commit()
+            message = "Sale successful!"
+
+    return render_template('billing.html', products=products, total=total, message=message)
+   
 if __name__ == "__main__":
     app.run(debug=True)
