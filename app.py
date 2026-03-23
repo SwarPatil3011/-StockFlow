@@ -1,11 +1,15 @@
 import mysql.connector
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 from flask import Flask, render_template, request, redirect, session
+
 
 db = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="Swar2006@#",
+    password=os.getenv("DB_PASSWORD"),
     database="stockflow_db"
 )
 
