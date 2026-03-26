@@ -142,34 +142,48 @@ def billing():
     message = None
 
     if request.method == 'POST':
-        product_id = request.form['product_id']
-        quantity = int(request.form['quantity'])
+        product_id = request.form.get('product_id')
+        quantity = request.form.get('quantity')
 
-        # get price + stock
+        # safety check
+        if not product_id or not quantity:
+            message = "Please fill all fields"
+            return render_template('billing.html', products=products, total=total, message=message)
+
+        quantity = int(quantity)
+
         cursor.execute("SELECT price, quantity FROM products WHERE id=%s", (product_id,))
         data = cursor.fetchone()
 
-        price = data['price']
-        stock = data['quantity']   # ⚠️ IMPORTANT (your column name)
+        if not data:
+            message = "Product not found"
+            return render_template('billing.html', products=products, total=total, message=message)
 
-        # ❗ check stock
+        price = data['price']
+        stock = data['quantity']
+
         if quantity > stock:
             message = "Not enough stock available!"
-        else:
-            total = price * quantity
+            return render_template('billing.html', products=products, total=total, message=message)
 
-            # 🔥 reduce stock
-            new_quantity = stock - quantity
-            cursor.execute("UPDATE products SET quantity=%s WHERE id=%s", (new_quantity, product_id))
-            # 🔥 save bill (we create table next)
-            cursor.execute(
-                "INSERT INTO bills (product_id, quantity, total) VALUES (%s, %s, %s)",
-                (product_id, quantity, total)
-            )
+        # SUCCESS CASE
+        total = price * quantity
 
-            db.commit()
-            bill_id = cursor.lastrowid   # 🔥 get last inserted bill id
-            return redirect(f"/invoice/{bill_id}")
+        new_stock = stock - quantity
+        cursor.execute("UPDATE products SET quantity=%s WHERE id=%s", (new_stock, product_id))
+
+        cursor.execute(
+            "INSERT INTO bills (product_id, quantity, total) VALUES (%s, %s, %s)",
+            (product_id, quantity, total)
+        )
+
+        db.commit()
+
+        bill_id = cursor.lastrowid
+        return redirect(f"/invoice/{bill_id}")
+
+    # GET request (default page load)
+    return render_template('billing.html', products=products, total=total, message=message)
 
 @app.route('/bills')
 def bills():
@@ -195,13 +209,21 @@ def bills():
 
     return render_template('bills.html', bills=all_bills)
 
+# Use bills.quantity for invoice and bills page (Quantity sold in that bill, You sold 2 Milk → bills.quantity = 2)
+# Use products.quantity for stock management (Quantity currently available in stock, * You had 10 Milk * Sold 2 → now products.quantity = 8)
+
 @app.route('/invoice/<int:bill_id>')
 def invoice(bill_id):
     if 'user' not in session:
         return redirect('/login')
     
     query = """
-    SELECT bills_id, products_name, bills.quantity, bills.total, bills.date
+    SELECT 
+         bills.id,
+         products.name,
+         bills.quantity,
+         bills.total,
+         bills.date
     FROM bills
     JOIN products ON bills.product_id = products.id
     WHERE bills.id = %s
@@ -210,7 +232,7 @@ def invoice(bill_id):
     cursor.execute(query, (bill_id,))
     bill = cursor.fetchone()
 
-    return redirect_template('invoice.html', bill = bill)
+    return render_template('invoice.html', bill = bill)
 
 if __name__ == "__main__":
     app.run(debug=True)

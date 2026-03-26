@@ -7,11 +7,11 @@
 
 <h2>Invoice 🧾</h2>
 
-<p><b>Bill ID:</b> {{ bill[0] }}</p>
-<p><b>Product:</b> {{ bill[1] }}</p>
-<p><b>Quantity:</b> {{ bill[2] }}</p>
-<p><b>Total:</b> ₹{{ bill[3] }}</p>
-<p><b>Date:</b> {{ bill[4] }}</p>
+<p><b>Bill ID:</b> {{ bill['id'] }}</p>
+<p><b>Product:</b> {{ bill['name'] }}</p>
+<p><b>Quantity:</b> {{ bill['quantity'] }}</p>
+<p><b>Total:</b> ₹{{ bill['total'] }}</p>
+<p><b>Date:</b> {{ bill['date'] }}</p>
 
 <hr>
 
