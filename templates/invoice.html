@@ -2,85 +2,38 @@
 <html>
 <head>
     <title>Invoice</title>
-
-    <style>
-        body {
-            font-family: Arial;
-            margin: 20px;
-        }
-
-        .navbar {
-            background-color: #1f2a38;
-            color: white;
-            padding: 10px;
-        }
-
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            margin-right: 10px;
-        }
-
-        .right {
-            float: right;
-        }
-
-        .container {
-            margin-top: 20px;
-        }
-
-        button {
-            padding: 8px 12px;
-            margin-right: 10px;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
 </head>
-
 <body>
 
-<!-- NAVBAR -->
-<div class="navbar">
-    <span>
-        <a href="/dashboard">Dashboard</a> |
-        <a href="/products">Products</a> |
-        <a href="/billing">Billing</a> |
-        <a href="/bills">Bills</a>
-    </span>
-
-    <span class="right">
-        Welcome, {{ session['user'] }} |
-        <a href="/logout" style="color:red;">Logout</a>
-    </span>
+    <div class="navbar">
+    <a href="/" style="color:white; text-decoration:none;">Dashboard</a> |
+    <a href="/products" style="color:white; text-decoration:none;">Products</a> |
+    <a href="/billing" style="color:white; text-decoration:none;">Billing</a> |
+     <a href="/bills" style="color:white; text-decoration:none;">Bills</a>
 </div>
 
-<!-- INVOICE CONTENT -->
-<div class="container">
+<h2>Invoice 🧾</h2>
 
-    <h2>Invoice 🧾</h2>
+<p><b>Bill ID:</b> {{ bill['id'] }}</p>
+<p><b>Product:</b> {{ bill['name'] }}</p>
+<p><b>Quantity:</b> {{ bill['quantity'] }}</p>
+<p><b>Total:</b> ₹{{ bill['total'] }}</p>
+<p><b>Date:</b> {{ bill['date'] }}</p>
 
-    <p><b>Bill ID:</b> {{ bill['id'] }}</p>
-    <p><b>Product:</b> {{ bill['name'] }}</p>
-    <p><b>Quantity:</b> {{ bill['quantity'] }}</p>
-    <p><b>Total:</b> ₹{{ bill['total'] }}</p>
-    <p><b>Date:</b> {{ bill['date'] }}</p>
+<hr>
 
-    <hr>
+<button onclick="window.print()">Print Invoice</button>
 
-    <!-- ACTION BUTTONS -->
-    <button onclick="window.print()">Print Invoice</button>
+<br><br>
 
-    <br><br>
+<a href="/billing">
+    <button>New Sale</button>
+</a>
 
-    <a href="/billing">
-        <button>New Sale</button>
-    </a>
-
-    <a href="/dashboard">
-        <button>Dashboard</button>
-    </a>
-
-</div>
+<a href="/dashboard">
+    <button>Dashboard</button>
+</a>
 
 </body>
 </html>
