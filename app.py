@@ -127,6 +127,9 @@ def update_product(id):
 
     return redirect("/products")
 
+# This is for creating a bill
+# This is INPUT / ACTION
+# like make a bill but we cannot see them
 @app.route('/billing', methods=['GET', 'POST'])
 def billing():
     if 'user' not in session:
@@ -169,6 +172,22 @@ def billing():
             message = "Sale successful!"
 
     return render_template('billing.html', products=products, total=total, message=message)
+
+@app.route('/bills')
+def bills():
+    if 'user' not in session:
+        return redirect('/login')
+    
+    cursor.execute("""
+                   SELECT bill'id, product.name, bills.quantity, bills.total, bills.date
+                   FROM bills
+                   JOIN products ON bills.product_id = products.id
+                   ORDER BY bills.id DESC
+                   """)
+    
+    all_bills = cursor.fetchall()
+
+    return render_template('bill.html', bills=all_bills)
    
 if __name__ == "__main__":
     app.run(debug=True)

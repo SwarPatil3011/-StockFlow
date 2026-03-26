@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bills</title>
+</head>
+<body>
+
+<h2>All Bills</h2>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>ID</th>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Total</th>
+        <th>Date</th>
+    </tr>
+
+    {% for b in bills %}
+    <tr>
+        <td>{{ b[0] }}</td>
+        <td>{{ b[1] }}</td>
+        <td>{{ b[2] }}</td>
+        <td>₹{{ b[3] }}</td>
+        <td>{{ b[4] }}</td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+</body>
+</html>
