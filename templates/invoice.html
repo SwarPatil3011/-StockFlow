@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Invoice</title>
+</head>
+<body>
+
+<h2>Invoice 🧾</h2>
+
+<p><b>Bill ID:</b> {{ bill[0] }}</p>
+<p><b>Product:</b> {{ bill[1] }}</p>
+<p><b>Quantity:</b> {{ bill[2] }}</p>
+<p><b>Total:</b> ₹{{ bill[3] }}</p>
+<p><b>Date:</b> {{ bill[4] }}</p>
+
+<hr>
+
+<button onclick="window.print()">Print Invoice</button>
+
+</body>
+</html>

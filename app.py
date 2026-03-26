@@ -195,5 +195,22 @@ def bills():
 
     return render_template('bills.html', bills=all_bills)
 
+@app.route('/invoice/<int:bill_id>')
+def invoice(bill_id):
+    if 'user' not in session:
+        return redirect('/login')
+    
+    query = """
+    SELECT bills_id, products_name, bills.quantity, bills.total, bills.date
+    FROM bills
+    JOIN products ON bills.product_id = products.id
+    WHERE bills.id = %s
+    """
+
+    cursor.execute(query, (bill_id,))
+    bill = cursor.fetchone()
+
+    return redirect_template('invoice.html', bill = bill)
+
 if __name__ == "__main__":
     app.run(debug=True)
