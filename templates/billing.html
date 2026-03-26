@@ -2,8 +2,16 @@
 <html>
 <head>
     <title>Billing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+
+<div class="navbar">
+    <a href="/" style="color:white; text-decoration:none;">Dashboard</a> |
+    <a href="/products" style="color:white; text-decoration:none;">Products</a> |
+    <a href="/billing" style="color:white; text-decoration:none;">Billing</a> |
+     <a href="/bills" style="color:white; text-decoration:none;">Bills</a>
+</div>
 
 <h2>Billing Page</h2>
 
@@ -11,11 +19,11 @@
 
     <label>Select Product:</label>
     <select name="product_id">
-        {% for p in products %}
-            <option value="{{ p[0] }}">
-                {{ p[1] }} (₹{{ p[2] }})
-            </option>
-        {% endfor %}
+    {% for p in products %}
+        <option value="{{ p['id'] }}">
+            {{ p['name'] }} - ₹{{ p['price'] }}
+        </option>
+    {% endfor %}
     </select>
 
     <br><br>

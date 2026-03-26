@@ -2,8 +2,16 @@
 <html>
 <head>
     <title>Bills</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+
+<div class="navbar">
+    <a href="/" style="color:white; text-decoration:none;">Dashboard</a> |
+    <a href="/products" style="color:white; text-decoration:none;">Products</a> |
+    <a href="/billing" style="color:white; text-decoration:none;">Billing</a> |
+     <a href="/bills" style="color:white; text-decoration:none;">Bills</a>
+</div>
 
 <h2>All Bills</h2>
 
@@ -18,14 +26,13 @@
 
     {% for b in bills %}
     <tr>
-        <td>{{ b[0] }}</td>
-        <td>{{ b[1] }}</td>
-        <td>{{ b[2] }}</td>
-        <td>₹{{ b[3] }}</td>
-        <td>{{ b[4] }}</td>
+        <td>{{ b['id'] }}</td>
+        <td>{{ b['name'] }}</td>
+        <td>{{ b['quantity'] }}</td>
+        <td>₹{{ b['total'] }}</td>
+        <td>{{ b['date'] }}</td>
     </tr>
     {% endfor %}
-
 </table>
 
 </body>

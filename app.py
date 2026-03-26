@@ -146,11 +146,11 @@ def billing():
         quantity = int(request.form['quantity'])
 
         # get price + stock
-        cursor.execute("SELECT price, stock FROM products WHERE id=%s", (product_id,))
+        cursor.execute("SELECT price, quantity FROM products WHERE id=%s", (product_id,))
         data = cursor.fetchone()
 
-        price = data[0]
-        stock = data[1]
+        price = data['price']
+        stock = data['quantity']   # ⚠️ IMPORTANT (your column name)
 
         # ❗ check stock
         if quantity > stock:
@@ -159,9 +159,8 @@ def billing():
             total = price * quantity
 
             # 🔥 reduce stock
-            new_stock = stock - quantity
-            cursor.execute("UPDATE products SET stock=%s WHERE id=%s", (new_stock, product_id))
-
+            new_quantity = stock - quantity
+            cursor.execute("UPDATE products SET quantity=%s WHERE id=%s", (new_quantity, product_id))
             # 🔥 save bill (we create table next)
             cursor.execute(
                 "INSERT INTO bills (product_id, quantity, total) VALUES (%s, %s, %s)",
@@ -169,25 +168,32 @@ def billing():
             )
 
             db.commit()
-            message = "Sale successful!"
-
-    return render_template('billing.html', products=products, total=total, message=message)
+            bill_id = cursor.lastrowid   # 🔥 get last inserted bill id
+            return redirect(f"/invoice/{bill_id}")
 
 @app.route('/bills')
 def bills():
     if 'user' not in session:
         return redirect('/login')
+
+    query = """
+    SELECT 
+        bills.id,
+        products.name,
+        bills.quantity,
+        bills.total,
+        bills.date
+    FROM bills
+    JOIN products ON bills.product_id = products.id
+    ORDER BY bills.id ASC       #bills will store serially 1,2,3..
+    """
     
-    cursor.execute("""
-                   SELECT bill'id, product.name, bills.quantity, bills.total, bills.date
-                   FROM bills
-                   JOIN products ON bills.product_id = products.id
-                   ORDER BY bills.id DESC
-                   """)
-    
+    print(query)
+
+    cursor.execute(query)
     all_bills = cursor.fetchall()
 
-    return render_template('bill.html', bills=all_bills)
-   
+    return render_template('bills.html', bills=all_bills)
+
 if __name__ == "__main__":
     app.run(debug=True)
