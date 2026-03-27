@@ -10,7 +10,7 @@
     <a href="/" style="color:white; text-decoration:none;">Dashboard</a> |
     <a href="/products" style="color:white; text-decoration:none;">Products</a> |
     <a href="/billing" style="color:white; text-decoration:none;">Billing</a> |
-     <a href="/bills" style="color:white; text-decoration:none;">Bills</a>
+    <a href="/bills" style="color:white; text-decoration:none;">Bills</a>
 </div>
 
         <div class="container">
@@ -28,22 +28,24 @@
         <button type="submit">Search</button>
     </form>
 
-    <button onclick="openModal()">+ Add Product</button>   <!-- it calls openModal() -->
+    <button onclick="openModal()" style="background-color:#007bff; color:white; padding:6px 12px; border:none; border-radius:5px;">
+    + Add Product
+    </button>   <!-- it calls openModal() -->
 
 </div>
 
  <!-- Products Table -->
     <div class="card">
-        <table border="1" width="100%" cellpadding="10">
+        <table style="width:100%; border-collapse:collapse;">
             <tr>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Stock</th>
-                <th>Action</th>
+                <th style="padding:10px; text-align:left;">Name</th>
+                <th style="padding:10px; text-align:left;">Price</th>
+                <th style="padding:10px; text-align:left;">Stock</th>
+                <th style="padding:10px; text-align:left;">Action</th>
             </tr>
 
             {% for product in products %}
-            <tr>
+             <tr style="border-bottom:1px solid #ddd;">
                 <td>{{ product.name }}</td>
                 <td>₹ {{ product.price }}</td>
                  <!-- This Adds stock color -->
@@ -58,16 +60,14 @@
                 </td>
                 <td>
                     <a href="/edit_product/{{ product.id }}">
-                         <button style="background-color:orange; color:white;">Edit</button>
+                         <button style="background-color:orange; color:white; margin-right:5px;">Edit</button>
                     </a>
 
                     <form method="POST" action="/delete_product/{{ product.id }}" style="display:inline;">
-                        <button type="submit" style="background-color:red; color:white;">Delete</button>
+                        <button type="submit" style="background-color:red; color:white; margin-right:5px;">Delete</button>
                     </form>
 
-                    <button style="background-color:green; color:white;">
-                    Restock
-                    </button>
+                    <button style="background-color:green; color:white;">Restock</button>
                 </td>
             </tr>
             {% endfor %}
