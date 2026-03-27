@@ -6,35 +6,42 @@
 </head>
 <body>
 
-<div class="navbar">
+<div style="display:flex;">
 
-<!-- LEFT SIDE -->
-<span>
-    <a href="/dashboard" style="color:white; text-decoration:none;">Dashboard</a> |
-    <a href="/products" style="color:white; text-decoration:none;">Products</a> |
-    <a href="/billing" style="color:white; text-decoration:none;">Billing</a> |
-    <a href="/bills" style="color:white; text-decoration:none;">Bills</a>
-</span>
+    <!-- SIDEBAR -->
+    <div style="width:220px; height:100vh; background:#021b36; color:white; padding:20px; display:flex; flex-direction:column; justify-content:space-between;">
+        
+        <!-- TOP MENU -->
+        <div>
+            <h2>StockFlow</h2>
 
-    <!-- RIGHT SIDE -->
-    <span style="float:right;">
-        Welcome, {{ session['user'] }} |
-        <a href="/logout" style="color:red; text-decoration:none;">Logout</a>
-    </span>
+            <p><a href="/dashboard" style="color:white; text-decoration:none;">Dashboard</a></p>
+            <p><a href="/products" style="color:white; text-decoration:none;">Products</a></p>
+            <p><a href="/billing" style="color:white; text-decoration:none;">Billing</a></p>
+            <p><a href="/bills" style="color:white; text-decoration:none;">Bills</a></p>
+            <p><a href="/logout" style="color:white; text-decoration:none;">logout</a></p>
+        </div>
+
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div style="flex:1; padding:20px;">
+
+        <div class="container">
+            <div class="card">
+                <h2>Welcome to StockFlow 🚀</h2>
+                <p>Your smart retail management system starts here.</p>
+            </div>
+
+            <div class="card">
+                <h3>Today's Sales</h3>
+                <p>₹ 12,450</p>
+            </div>
+        </div>
+
+    </div>
 
 </div>
-
-    <div class="container">
-        <div class="card">
-            <h2>Welcome to StockFlow 🚀</h2>
-            <p>Your smart retail management system starts here.</p>
-        </div>
-
-        <div class="card">
-            <h3>Today's Sales</h3>
-            <p>₹ 12,450</p>
-        </div>
-    </div>
 
 </body>
 </html>

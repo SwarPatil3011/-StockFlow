@@ -6,13 +6,26 @@
 </head>
 <body>
 
-<div class="navbar">
-    <a href="/" style="color:white; text-decoration:none;">Dashboard</a> |
-    <a href="/products" style="color:white; text-decoration:none;">Products</a> |
-    <a href="/billing" style="color:white; text-decoration:none;">Billing</a> |
-     <a href="/bills" style="color:white; text-decoration:none;">Bills</a>
-</div>
+<div style="display:flex;">
 
+    <!-- SIDEBAR -->
+    <div style="width:220px; height:100vh; background:#021b36; color:white; padding:20px; display:flex; flex-direction:column; justify-content:space-between;">
+        
+        <!-- TOP MENU -->
+        <div>
+            <h2>StockFlow</h2>
+
+            <p><a href="/dashboard" style="color:white; text-decoration:none;">Dashboard</a></p>
+            <p><a href="/products" style="color:white; text-decoration:none;">Products</a></p>
+            <p><a href="/billing" style="color:white; text-decoration:none;">Billing</a></p>
+            <p><a href="/bills" style="color:white; text-decoration:none;">Bills</a></p>
+            <p><a href="/logout" style="color:white; text-decoration:none;">logout</a></p>
+        </div>
+
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div style="flex:1; padding:20px;">
 <h2>Billing Page</h2>
 
 <form method="POST">
@@ -41,5 +54,6 @@
     <h3>Total Amount: ₹{{ total }}</h3>
 {% endif %}
 
+    </div>
 </body>
 </html>
