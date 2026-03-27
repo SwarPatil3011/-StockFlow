@@ -32,36 +32,35 @@
 
 </div>
 
-    <!-- 🔹 ADD PRODUCT FORM HERE -->
-     <div class="card">
-     <h3>Add New Product</h3>
-     <form method="POST" action="/add_product">
-        <input type="text" name="name" placeholder="Product Name" required><br><br>
-        <input type="number" name="price" placeholder="Price" required><br><br>
-        <input type="number" name="quantity" placeholder="Quantity" required><br><br>
-        <button type="submit">Add Product</button>
-     </form>
-     </div>
+ <!-- Products Table -->
+    <div class="card">
+        <table border="1" width="100%" cellpadding="10">
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Action</th>
+            </tr>
 
-{% for product in products %}
-<div class="card">
-    <h3>{{ product.name }}</h3>
-    <p>Price: ₹ {{ product.price }}</p>
-    <p>Quantity: {{ product.quantity }}</p>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>₹ {{ product.price }}</td>
+                <td>{{ product.quantity }}</td>
+                <td>
+                    <a href="/edit_product/{{ product.id }}">Edit</a>
 
-    <a href="/edit_product/{{ product.id }}">
-        <button style="background-color:orange; color:white;">
-            Edit
-        </button>
-    </a>
+                    <form method="POST" action="/delete_product/{{ product.id }}" style="display:inline;">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
 
-    <form method="POST" action="/delete_product/{{ product.id }}">
-        <button type="submit" style="background-color:red; color:white;">
-            Delete
-        </button>
-    </form>
+        </table>
+    </div>
+
 </div>
-{% endfor %}
-</div>
-    </body>
+
+</body>
 </html>
