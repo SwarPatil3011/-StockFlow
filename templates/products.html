@@ -21,12 +21,16 @@
     </div>
 
     <!-- 🔍 SEARCH FORM GOES HERE -->
-    <div class="card">
-        <form method="GET" action="/products">
-            <input type="text" name="search" placeholder="Search product name">
-            <button type="submit">Search</button>
-        </form>
-    </div>
+ <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+    
+    <form method="GET" action="/products">
+        <input type="text" name="search" placeholder="Search product name">
+        <button type="submit">Search</button>
+    </form>
+
+    <button onclick="openModal()">+ Add Product</button>
+
+</div>
 
     <!-- 🔹 ADD PRODUCT FORM HERE -->
      <div class="card">
