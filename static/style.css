@@ -22,4 +22,114 @@ body {
     margin-bottom: 20px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
+
+/* Sidebar */
+.sidebar {
+    width: 240px;
+    height: 100vh;
+    background: #0f172a;
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar h2 {
+    margin-bottom: 40px;
+}
+
+.sidebar a {
+    padding: 8px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: white;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.sidebar a:hover {
+    background: #1e293b;
+}
+
+.sidebar .active {
+    background: #1e293b;
+}
+
+.logout {
+    margin-top: auto;
+    color: #f87171;
+}
+
+/* Layout */
+.main {
+    display: flex;
+}
+
+.content {
+    flex: 1;
+    padding: 20px;
+}
+
+/* Top bar */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search-box {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+/* Buttons */
+.btn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: #2563eb;
+    color: white;
+}
+
+.btn-edit {
+    background: orange;
+    color: white;
+}
+
+.btn-delete {
+    background: red;
+    color: white;
+}
+
+.btn-restock {
+    background: green;
+    color: white;
+}
+
+/* Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    padding: 12px;
+    text-align: left;
+}
+
+td {
+    padding: 12px;
+}
+
+tr {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+
  

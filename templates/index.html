@@ -1,48 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>StockFlow Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
 
-<div style="display:flex;">
+{% block title %}Dashboard{% endblock %}
 
-    <!-- SIDEBAR -->
-    <div style="width:220px; height:100vh; background:#021b36; color:white; padding:10px; display:flex; flex-direction:column;">
-        
-        <!-- TOP MENU -->
-        
-            <h2 style="margin-bottom:30px;">StockFlow</h2>
+{% block content %}
 
-            <div style="display:flex; flex-direction:column; gap:10px;"></div>       
-
-            <a href="/dashboard" style="padding:8px; border-radius:6px; color:white; text-decoration:none;">Dashboard</a></p>
-            <a href="/products" style="padding:8px; border-radius:6px; color:white; text-decoration:none;">Products</a></p>
-            <a href="/billing" style="padding:8px; border-radius:6px; color:white; text-decoration:none;">Billing</a></p>
-            <a href="/bills" style="padding:8px; border-radius:6px; color:white; text-decoration:none;">Bills</a></p>
-            <a href="/logout" style="padding:8px; border-radius:6px; color:white; text-decoration:none;">logout</a></p>
-
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div style="flex:1; padding:20px;">
-
-        <div class="container">
-            <div class="card">
-                <h2>Welcome to StockFlow 🚀</h2>
-                <p>Your smart retail management system starts here.</p>
-            </div>
-
-            <div class="card">
-                <h3>Today's Sales</h3>
-                <p>₹ 12,450</p>
-            </div>
-        </div>
-
-    </div>
-
+<div class="card">
+    <h2>Welcome to StockFlow 🚀</h2>
+    <p>Your smart retail management system starts here.</p>
 </div>
 
-</body>
-</html>
+<div class="card">
+    <h3>Today's Sales</h3>
+    <p>₹ 12,450</p>
+</div>
+
+{% endblock %}

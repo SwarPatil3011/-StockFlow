@@ -1,55 +1,33 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Bills</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
 
-<div style="display:flex;">
+{% block title %}Bills{% endblock %}
 
-    <!-- SIDEBAR -->
-    <div style="width:220px; height:100vh; background:#021b36; color:white; padding:10px; display:flex; flex-direction:column;">
-        
-        <!-- TOP MENU -->
-        
-            <h2 style="margin-bottom:30px;">StockFlow</h2>
+{% block content %}
 
-            <div style="display:flex; flex-direction:column; gap:10px;"></div>       
-
-            <a href="/dashboard" style="padding:8px; border-radius:6px; color:white; text-decoration:none;">Dashboard</a></p>
-            <a href="/products" style="padding:8px; border-radius:6px; color:white; text-decoration:none;">Products</a></p>
-            <a href="/billing" style="padding:8px; border-radius:6px; color:white; text-decoration:none;">Billing</a></p>
-            <a href="/bills" style="padding:8px; border-radius:6px; color:white; text-decoration:none;">Bills</a></p>
-            <a href="/logout" style="padding:8px; border-radius:6px; color:white; text-decoration:none;">logout</a></p>
-
-    </div>
-
-<!-- MAIN CONTENT -->
-<div style="flex:1; padding:20px;">
-
+<div class="card">
     <h2>All Bills</h2>
-
-<table border="1" cellpadding="10">
-    <tr>
-        <th>ID</th>
-        <th>Product</th>
-        <th>Quantity</th>
-        <th>Total</th>
-        <th>Date</th>
-    </tr>
-
-    {% for b in bills %}
-    <tr>
-        <td>{{ b['id'] }}</td>
-        <td>{{ b['name'] }}</td>
-        <td>{{ b['quantity'] }}</td>
-        <td>₹{{ b['total'] }}</td>
-        <td>{{ b['date'] }}</td>
-    </tr>
-    {% endfor %}
-</table>
-
 </div>
-</body>
-</html>
+
+<div class="card">
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th>Date</th>
+        </tr>
+
+        {% for b in bills %}
+        <tr>
+            <td>{{ b['id'] }}</td>
+            <td>{{ b['name'] }}</td>
+            <td>{{ b['quantity'] }}</td>
+            <td>₹ {{ b['total'] }}</td>
+            <td>{{ b['date'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

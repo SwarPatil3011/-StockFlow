@@ -1,60 +1,41 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Billing</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
 
-<div style="display:flex;">
+{% block title %}Billing{% endblock %}
 
-    <!-- SIDEBAR -->
-    <div style="width:220px; height:100vh; background:#021b36; color:white; padding:10px; display:flex; flex-direction:column;">
-        
-        <!-- TOP MENU -->
-        
-            <h2 style="margin-bottom:30px;">StockFlow</h2>
+{% block content %}
 
-            <div style="display:flex; flex-direction:column; gap:10px;"></div>       
+<div class="card">
+    <h2>Billing Page</h2>
+</div>
 
-            <a href="/dashboard" style="padding:8px; border-radius:6px; color:white; text-decoration:none;">Dashboard</a></p>
-            <a href="/products" style="padding:8px; border-radius:6px; color:white; text-decoration:none;">Products</a></p>
-            <a href="/billing" style="padding:8px; border-radius:6px; color:white; text-decoration:none;">Billing</a></p>
-            <a href="/bills" style="padding:8px; border-radius:6px; color:white; text-decoration:none;">Bills</a></p>
-            <a href="/logout" style="padding:8px; border-radius:6px; color:white; text-decoration:none;">logout</a></p>
+<div class="card">
+    <form method="POST">
 
-    </div>
+        <label>Select Product:</label><br>
+        <select name="product_id" style="width:100%; padding:8px;">
+            {% for p in products %}
+                <option value="{{ p['id'] }}">
+                    {{ p['name'] }} - ₹{{ p['price'] }}
+                </option>
+            {% endfor %}
+        </select>
 
-    <!-- MAIN CONTENT -->
-    <div style="flex:1; padding:20px;">
-<h2>Billing Page</h2>
+        <br><br>
 
-<form method="POST">
+        <label>Quantity:</label><br>
+        <input type="number" name="quantity" required style="width:100%; padding:8px;">
 
-    <label>Select Product:</label>
-    <select name="product_id">
-    {% for p in products %}
-        <option value="{{ p['id'] }}">
-            {{ p['name'] }} - ₹{{ p['price'] }}
-        </option>
-    {% endfor %}
-    </select>
+        <br><br>
 
-    <br><br>
+        <button type="submit" class="btn btn-primary">Calculate</button>
 
-    <label>Quantity:</label>
-    <input type="number" name="quantity" required>
-
-    <br><br>
-
-    <button type="submit">Calculate</button>
-
-</form>
+    </form>
+</div>
 
 {% if total %}
-    <h3>Total Amount: ₹{{ total }}</h3>
+<div class="card">
+    <h3>Total Amount: ₹ {{ total }}</h3>
+</div>
 {% endif %}
 
-    </div>
-</body>
-</html>
+{% endblock %}
