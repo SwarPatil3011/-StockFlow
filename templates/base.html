@@ -1,5 +1,9 @@
 <!--Template inheritance (Jinja) -->
 
+<!--"To avoid repeating the same sidebar code in every file we have added base.html and connected all files sidebar related to in it, 
+so no need to write same sidebar code in all files, Now Sidebar is written only once (base.html) and Other pages just 'plug into it'.
+This is called : Template inheritance (Jinja)"-->
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,10 +19,10 @@
         <h2>StockFlow</h2>
 
         <div>
-            <a href="/dashboard">Dashboard</a>
-            <a href="/products">Products</a>
-            <a href="/billing">Billing</a>
-            <a href="/bills">Bills</a>
+            <a href="/dashboard" class="{% if request.path == '/dashboard'%}active{% endif %}">Dashboard</a>
+            <a href="/products" class="{% if request.path == '/Products'%}active{% endif %}">Products</a>
+            <a href="/billing" class="{% if request.path == '/billing'%}active{% endif %}">Billing</a>
+            <a href="/bills" class="{% if request.path == '/bills'%}active{% endif %}">Bills</a>
             <a href="/logout" class="logout">Logout</a>
         </div>
     

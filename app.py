@@ -234,5 +234,30 @@ def invoice(bill_id):
 
     return render_template('invoice.html', bill = bill)
 
+@app.route('/redtock', methods=['POST'])
+def restock():
+    product_id = request.form['product_id']  # product_id → which product to update
+    add_qty = int(request.form['quantity'])  # quantity → how much to add
+
+    conn = get_db_connection()  # conn → connection
+    cursor = conn,cursor()  # cursor → used to run SQL queries
+
+     # 1. Get current stock
+    cursor.execute("SELECT quantity FROM products WHERE id = %s", (product_id,))  # Find current stock of that product
+    current_stock = cursor.fetchone()[0]
+
+    # 2. Add quantity
+    new_stock = current_stock + add_qty
+
+    # 3. Update DB
+    cursor.execute("UPDATE products SET quantity = %s WHERE id = %s", (new_stock, product_id))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return redirect('/products')
+
+
 if __name__ == "__main__":
     app.run(debug=True)
