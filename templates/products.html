@@ -34,14 +34,22 @@
 
             <td>
                 {% if product.quantity == 0 %}
-                    <span style="color:red;">{{ product.quantity }}</span>
+                    <span style="color:red; font-weight:bold;">
+                        {{ product.quantity }} (Out of Stock)
+                    </span>
+
                 {% elif product.quantity <= 5 %}
-                    <span style="color:orange;">{{ product.quantity }}</span>
+                    <span style="color:orange; font-weight:bold;">
+                        {{ product.quantity }} (Low)
+                    </span>
+
                 {% else %}
-                    <span style="color:green;">{{ product.quantity }}</span>
+                    <span style="color:green;">
+                        {{ product.quantity }}
+                    </span>
                 {% endif %}
             </td>
-
+            
             <td>
                 <a href="/edit_product/{{ product.id }}">
                     <button class="btn btn-edit">Edit</button>
@@ -51,7 +59,9 @@
                     <button type="submit" class="btn btn-delete">Delete</button>
                 </form>
 
-                <button class="btn btn-restock">Restock</button>
+                 <button onclick="openRestockModal({{ product.id }}, '{{ product.name }}')" class="btn btn-restock">
+                    Restock
+                </button>
             </td>
         </tr>
         {% endfor %}
@@ -59,3 +69,41 @@
 </div>
 
 {% endblock %}
+
+<!--  RESTOCK MODAL -->
+<div id="restockModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);">
+
+    <div style="background:white; width:400px; margin:100px auto; padding:20px; border-radius:10px;">
+        
+        <h3>Restock Product</h3>
+
+        <form method="POST" action="/restock">
+
+            <input type="hidden" name="product_id" id="restockProductId">
+
+            <p id="productName"></p>
+
+            <input type="number" name="quantity" placeholder="Add Quantity" required>
+
+            <br><br>
+
+            <button type="submit">Update Stock</button>
+            <button type="button" onclick="closeRestockModal()">Cancel</button>
+
+        </form>
+
+    </div>
+</div>
+
+<!--  JS -->
+<script>
+function openRestockModal(id, name) {
+    document.getElementById("restockModal").style.display = "block";
+    document.getElementById("restockProductId").value = id;
+    document.getElementById("productName").innerText = "Product: " + name;
+}
+
+function closeRestockModal() {
+    document.getElementById("restockModal").style.display = "none";
+}
+</script>

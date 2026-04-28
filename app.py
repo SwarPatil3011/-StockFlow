@@ -27,6 +27,8 @@ def login():
         return redirect('/dashboard')
 
     if request.method == 'POST':
+        cursor = db.cursor(dictionary=True, buffered=True)
+
         username = request.form["username"]
         password = request.form["password"]
 
@@ -36,6 +38,7 @@ def login():
         )
 
         user = cursor.fetchone()
+        cursor.close()
 
         if user:
             session['user'] = username
@@ -62,6 +65,8 @@ def products():
     if 'user' not in session:
         return redirect('/login')
     
+    cursor = db.cursor(dictionary=True, buffered=True) # Create a new cursor for this route
+    
     search = request.args.get("search")
 
     if search:
@@ -73,6 +78,14 @@ def products():
         cursor.execute("SELECT * FROM products")
 
     product_list = cursor.fetchall()
+    cursor.close() 
+
+    for p in product_list:
+        if p['quantity'] < 10:
+             p['low_stock'] = True
+        else:
+             p['low_stock'] = False
+             
     return render_template("products.html", products=product_list)
 
 @app.route("/delete_product/<int:id>", methods=["POST"])
@@ -80,14 +93,19 @@ def delete_product(id):
     if 'user' not in session:
         return redirect('/login')
     
+    cursor = db.cursor()
     cursor.execute("DELETE FROM products WHERE id = %s", (id,))
     db.commit()
+    cursor.close()
+
     return redirect("/products")
 
 @app.route("/add_product", methods=["POST"])
 def add_product():
     if 'user' not in session:
         return redirect('/login')
+    
+    cursor = db.cursor()
     
     name = request.form["name"]
     price = request.form["price"]
@@ -98,6 +116,7 @@ def add_product():
         (name, price, quantity)
     )
     db.commit()
+    cursor.close()
 
     return redirect("/products")
 
@@ -106,14 +125,18 @@ def edit_product(id):
     if 'user' not in session:
         return redirect('/login')
     
+    cursor = db.cursor(dictionary=True, buffered=True)
     cursor.execute("SELECT * FROM products WHERE id = %s", (id,))
     product = cursor.fetchone()
+    cursor.close()
     return render_template("edit_product.html", product=product)
 
 @app.route("/update_product/<int:id>", methods=["POST"])
 def update_product(id):
     if 'user' not in session:
         return redirect('/login')
+    
+    cursor = db.cursor()
     
     name = request.form["name"]
     price = request.form["price"]
@@ -124,6 +147,7 @@ def update_product(id):
         (name, price, quantity, id)
     )
     db.commit()
+    cursor.close()
 
     return redirect("/products")
 
@@ -134,6 +158,8 @@ def update_product(id):
 def billing():
     if 'user' not in session:
         return redirect('/login')
+    
+    cursor = db.cursor(dictionary=True, buffered=True)
 
     cursor.execute("SELECT * FROM products")
     products = cursor.fetchall()
@@ -180,8 +206,11 @@ def billing():
         db.commit()
 
         bill_id = cursor.lastrowid
-        return redirect(f"/invoice/{bill_id}")
+        cursor.close()
 
+        return redirect(f"/invoice/{bill_id}")
+    
+    cursor.close()
     # GET request (default page load)
     return render_template('billing.html', products=products, total=total, message=message)
 
@@ -189,6 +218,8 @@ def billing():
 def bills():
     if 'user' not in session:
         return redirect('/login')
+    
+    cursor = db.cursor(dictionary=True, buffered=True)
 
     query = """
     SELECT 
@@ -206,6 +237,7 @@ def bills():
 
     cursor.execute(query)
     all_bills = cursor.fetchall()
+    cursor.close()
 
     return render_template('bills.html', bills=all_bills)
 
@@ -216,6 +248,8 @@ def bills():
 def invoice(bill_id):
     if 'user' not in session:
         return redirect('/login')
+    
+    cursor = db.cursor(dictionary=True, buffered=True)
     
     query = """
     SELECT 
@@ -231,30 +265,32 @@ def invoice(bill_id):
 
     cursor.execute(query, (bill_id,))
     bill = cursor.fetchone()
+    cursor.close()
 
     return render_template('invoice.html', bill = bill)
 
-@app.route('/redtock', methods=['POST'])
+@app.route('/restock', methods=['POST'])
 def restock():
+    if 'user' not in session:
+        return redirect('/login')
+    
     product_id = request.form['product_id']  # product_id → which product to update
     add_qty = int(request.form['quantity'])  # quantity → how much to add
 
-    conn = get_db_connection()  # conn → connection
-    cursor = conn,cursor()  # cursor → used to run SQL queries
+    cursor = db.cursor(dictionary=True, buffered=True)
 
      # 1. Get current stock
     cursor.execute("SELECT quantity FROM products WHERE id = %s", (product_id,))  # Find current stock of that product
-    current_stock = cursor.fetchone()[0]
+    current_stock = cursor.fetchone()['quantity']  # Get the quantity value from the result 
 
     # 2. Add quantity
     new_stock = current_stock + add_qty
 
     # 3. Update DB
     cursor.execute("UPDATE products SET quantity = %s WHERE id = %s", (new_stock, product_id))
-
-    conn.commit()
+    
+    db.commit()
     cursor.close()
-    conn.close()
 
     return redirect('/products')
 
