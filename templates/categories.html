@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Categories{% endblock %}
+
+{% block content %}
+
+<div class="card">
+    <h2>Categories 🗂️</h2>
+</div>
+
+<!-- Add Category -->
+<div class="card" style="max-width:500px;">
+    <h3 style="margin-top:0;">Add New Category</h3>
+    <form method="POST" action="/add_category" style="display:flex; gap:10px;">
+        <input type="text" name="name" placeholder="Category name..." required
+            style="flex:1; padding:10px; border:1px solid #d1d5db; border-radius:6px;">
+        <button type="submit" class="btn btn-primary">Add</button>
+    </form>
+</div>
+
+<!-- Categories Table -->
+<div class="card">
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Category Name</th>
+            <th>Products</th>
+            <th>Action</th>
+        </tr>
+
+        {% for cat in categories %}
+        <tr>
+            <td>{{ cat.id }}</td>
+            <td>{{ cat.name }}</td>
+            <td>{{ cat.product_count }}</td>
+            <td>
+                <form method="POST" action="/delete_category/{{ cat.id }}" style="display:inline;"
+                    onsubmit="return confirm('Delete {{ cat.name }}? Products in this category will have no category.')">
+                    <button type="submit" class="btn btn-delete">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+
+        {% if categories|length == 0 %}
+        <tr>
+            <td colspan="4" style="text-align:center; color:#9ca3af; padding:30px;">
+                No categories yet.
+            </td>
+        </tr>
+        {% endif %}
+    </table>
+</div>
+
+{% endblock %}
