@@ -228,3 +228,40 @@ tr {
     text-align: center;
     padding: 30px 0;
 }
+
+/* Category Filter Tabs */
+.cat-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+ 
+.cat-tab {
+    padding: 6px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    background: #f3f4f6;
+    transition: all 0.2s;
+}
+ 
+.cat-tab:hover {
+    background: #e5e7eb;
+}
+ 
+.cat-tab-active {
+    background: #2563eb;
+    color: white;
+}
+ 
+/* Category Badge in table */
+.cat-badge {
+    background: #eff6ff;
+    color: #1d4ed8;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}

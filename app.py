@@ -133,18 +133,35 @@ def products():
         return redirect('/login')
 
     db = get_db()
-    cursor = db.cursor(dictionary=True, buffered=True)   # Create a new cursor for this route
+    cursor = db.cursor(dictionary=True, buffered=True)
 
+    # Load all categories for tabs + modal
+    cursor.execute("SELECT * FROM categories ORDER BY name ASC")
+    categories = cursor.fetchall()
+
+    # Category filter
+    selected_category = request.args.get("category")
     search = request.args.get("search")
 
-    if search:
-        cursor.execute(
-            "SELECT * FROM products WHERE name LIKE %s",
-            ("%" + search + "%",)
-        )
-    else:
-        cursor.execute("SELECT * FROM products")
+    query = """
+        SELECT products.*, categories.name AS category_name
+        FROM products
+        LEFT JOIN categories ON products.category_id = categories.id
+        WHERE 1=1
+    """
+    params = []
 
+    if search:
+        query += " AND products.name LIKE %s"
+        params.append("%" + search + "%")
+
+    if selected_category:
+        query += " AND products.category_id = %s"
+        params.append(selected_category)
+
+    query += " ORDER BY products.name ASC"
+
+    cursor.execute(query, params)
     product_list = cursor.fetchall()
     cursor.close()
     db.close()
@@ -152,22 +169,14 @@ def products():
     for p in product_list:
         p['low_stock'] = p['quantity'] < 10
 
-    return render_template("products.html", products=product_list)
+    # Convert selected_category to int for template comparison
+    selected_category = int(selected_category) if selected_category else None
 
-
-@app.route("/delete_product/<int:id>", methods=["POST"])
-def delete_product(id):
-    if 'user' not in session:
-        return redirect('/login')
-
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute("DELETE FROM products WHERE id = %s", (id,))
-    db.commit()
-    cursor.close()
-    db.close()
-
-    return redirect("/products")
+    return render_template("products.html",
+        products=product_list,
+        categories=categories,
+        selected_category=selected_category
+    )
 
 
 @app.route("/add_product", methods=["POST"])
@@ -181,10 +190,11 @@ def add_product():
     name = request.form["name"]
     price = request.form["price"]
     quantity = request.form["quantity"]
+    category_id = request.form.get("category_id") or None
 
     cursor.execute(
-        "INSERT INTO products (name, price, quantity) VALUES (%s, %s, %s)",
-        (name, price, quantity)
+        "INSERT INTO products (name, price, quantity, category_id) VALUES (%s, %s, %s, %s)",
+        (name, price, quantity, category_id)
     )
     db.commit()
     cursor.close()
@@ -200,12 +210,17 @@ def edit_product(id):
 
     db = get_db()
     cursor = db.cursor(dictionary=True, buffered=True)
+
     cursor.execute("SELECT * FROM products WHERE id = %s", (id,))
     product = cursor.fetchone()
+
+    cursor.execute("SELECT * FROM categories ORDER BY name ASC")
+    categories = cursor.fetchall()
+
     cursor.close()
     db.close()
 
-    return render_template("edit_product.html", product=product)
+    return render_template("edit_product.html", product=product, categories=categories)
 
 
 @app.route("/update_product/<int:id>", methods=["POST"])
@@ -219,16 +234,73 @@ def update_product(id):
     name = request.form["name"]
     price = request.form["price"]
     quantity = request.form["quantity"]
+    category_id = request.form.get("category_id") or None
 
     cursor.execute(
-        "UPDATE products SET name=%s, price=%s, quantity=%s WHERE id=%s",
-        (name, price, quantity, id)
+        "UPDATE products SET name=%s, price=%s, quantity=%s, category_id=%s WHERE id=%s",
+        (name, price, quantity, category_id, id)
     )
     db.commit()
     cursor.close()
     db.close()
 
     return redirect("/products")
+
+@app.route("/categories")
+def categories():
+    if 'user' not in session:
+        return redirect('/login')
+
+    db = get_db()
+    cursor = db.cursor(dictionary=True, buffered=True)
+
+    cursor.execute("""
+        SELECT categories.id, categories.name,
+               COUNT(products.id) AS product_count
+        FROM categories
+        LEFT JOIN products ON products.category_id = categories.id
+        GROUP BY categories.id, categories.name
+        ORDER BY categories.name ASC
+    """)
+    cats = cursor.fetchall()
+    cursor.close()
+    db.close()
+
+    return render_template("categories.html", categories=cats)
+
+
+@app.route("/add_category", methods=["POST"])
+def add_category():
+    if 'user' not in session:
+        return redirect('/login')
+
+    db = get_db()
+    cursor = db.cursor()
+    name = request.form["name"].strip()
+
+    if name:
+        cursor.execute("INSERT INTO categories (name) VALUES (%s)", (name,))
+        db.commit()
+
+    cursor.close()
+    db.close()
+    return redirect("/categories")
+
+
+@app.route("/delete_category/<int:id>", methods=["POST"])
+def delete_category(id):
+    if 'user' not in session:
+        return redirect('/login')
+
+    db = get_db()
+    cursor = db.cursor()
+    # Set category_id to NULL for products in this category
+    cursor.execute("UPDATE products SET category_id = NULL WHERE category_id = %s", (id,))
+    cursor.execute("DELETE FROM categories WHERE id = %s", (id,))
+    db.commit()
+    cursor.close()
+    db.close()
+    return redirect("/categories")
 
 # This is for creating a bill
 # This is INPUT / ACTION
