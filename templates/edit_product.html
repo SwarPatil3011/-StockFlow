@@ -1,18 +1,47 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Edit Product</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-<h2>Edit Product</h2>
+{% block title %}Edit Product{% endblock %}
 
-<form method="POST" action="/update_product/{{ product.id }}">
-    <input type="text" name="name" value="{{ product.name }}" required><br><br>
-    <input type="number" name="price" value="{{ product.price }}" required><br><br>
-    <input type="number" name="quantity" value="{{ product.quantity }}" required><br><br>
-    <button type="submit">Update Product</button>
-</form>
+{% block content %}
 
-</body>
-</html>
+<div class="card">
+    <h2>Edit Product ✏️</h2>
+</div>
+
+<div class="card" style="max-width: 500px;">
+    <form method="POST" action="/update_product/{{ product.id }}">
+
+        <label>Product Name</label><br>
+        <input type="text" name="name" value="{{ product.name }}" required
+            style="width:100%; padding:10px; margin:6px 0 14px; border:1px solid #d1d5db; border-radius:6px; box-sizing:border-box;">
+
+        <label>Category</label><br>
+        <select name="category_id" required
+            style="width:100%; padding:10px; margin:6px 0 14px; border:1px solid #d1d5db; border-radius:6px;">
+            <option value="">-- Select Category --</option>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}" {% if cat.id == product.category_id %}selected{% endif %}>
+                {{ cat.name }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label>Price (₹)</label><br>
+        <input type="number" step="0.01" name="price" value="{{ product.price }}" required
+            style="width:100%; padding:10px; margin:6px 0 14px; border:1px solid #d1d5db; border-radius:6px; box-sizing:border-box;">
+
+        <label>Stock Quantity</label><br>
+        <input type="number" name="quantity" value="{{ product.quantity }}" required
+            style="width:100%; padding:10px; margin:6px 0 20px; border:1px solid #d1d5db; border-radius:6px; box-sizing:border-box;">
+
+        <div style="display:flex; gap:10px;">
+            <button type="submit" class="btn btn-primary" style="flex:1;">Save Changes</button>
+            <a href="/products" style="flex:1;">
+                <button type="button" class="btn" style="width:100%; background:#e5e7eb;">Cancel</button>
+            </a>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}

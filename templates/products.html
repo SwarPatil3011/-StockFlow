@@ -8,20 +8,33 @@
     <h2>Products Page 📦</h2>
 </div>
 
+<!-- Search + Add -->
 <div class="card topbar">
     <form method="GET" action="/products" style="width:70%;">
-        <input type="text" name="search" class="search-box" placeholder="Search products by name...">
+        <input type="text" name="search" value="{{ request.args.get('search', '') }}" class="search-box" placeholder="Search products by name...">
     </form>
-
-    <button onclick="openModal()" class="btn btn-primary">
-        + Add Product
-    </button>
+    <button onclick="openModal()" class="btn btn-primary">+ Add Product</button>
 </div>
 
+<!-- Category Filter Tabs -->
+<div class="card" style="padding: 12px 20px;">
+    <div class="cat-tabs">
+        <a href="/products" class="cat-tab {% if not selected_category %}cat-tab-active{% endif %}">All</a>
+        {% for cat in categories %}
+        <a href="/products?category={{ cat.id }}" 
+           class="cat-tab {% if selected_category == cat.id %}cat-tab-active{% endif %}">
+            {{ cat.name }}
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Products Table -->
 <div class="card">
     <table>
         <tr>
             <th>Name</th>
+            <th>Category</th>
             <th>Price</th>
             <th>Stock</th>
             <th>Action</th>
@@ -30,80 +43,118 @@
         {% for product in products %}
         <tr>
             <td>{{ product.name }}</td>
+            <td>
+                <span class="cat-badge">{{ product.category_name or '—' }}</span>
+            </td>
             <td>₹ {{ product.price }}</td>
-
             <td>
                 {% if product.quantity == 0 %}
-                    <span style="color:red; font-weight:bold;">
-                        {{ product.quantity }} (Out of Stock)
-                    </span>
-
+                    <span style="color:red; font-weight:bold;">{{ product.quantity }} (Out of Stock)</span>
                 {% elif product.quantity <= 5 %}
-                    <span style="color:orange; font-weight:bold;">
-                        {{ product.quantity }} (Low)
-                    </span>
-
+                    <span style="color:orange; font-weight:bold;">{{ product.quantity }} (Low)</span>
                 {% else %}
-                    <span style="color:green;">
-                        {{ product.quantity }}
-                    </span>
+                    <span style="color:green;">{{ product.quantity }}</span>
                 {% endif %}
             </td>
-            
             <td>
                 <a href="/edit_product/{{ product.id }}">
                     <button class="btn btn-edit">Edit</button>
                 </a>
-
                 <form method="POST" action="/delete_product/{{ product.id }}" style="display:inline;">
                     <button type="submit" class="btn btn-delete">Delete</button>
                 </form>
-
-                 <button onclick="openRestockModal({{ product.id }}, '{{ product.name }}')" class="btn btn-restock">
-                    Restock
-                </button>
+                <button onclick="openRestockModal({{ product.id }}, '{{ product.name }}')" class="btn btn-restock">Restock</button>
             </td>
         </tr>
         {% endfor %}
+
+        {% if products|length == 0 %}
+        <tr>
+            <td colspan="5" style="text-align:center; color:#9ca3af; padding:30px;">
+                No products found.
+            </td>
+        </tr>
+        {% endif %}
     </table>
 </div>
 
-{% endblock %}
+<!-- ADD PRODUCT MODAL -->
+<div id="addModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+    <div style="background:white; width:450px; margin:80px auto; padding:30px; border-radius:12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+        <h3 style="margin-top:0;">➕ Add New Product</h3>
 
-<!--  RESTOCK MODAL -->
-<div id="restockModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);">
+        <form method="POST" action="/add_product">
 
-    <div style="background:white; width:400px; margin:100px auto; padding:20px; border-radius:10px;">
-        
-        <h3>Restock Product</h3>
+            <label>Product Name</label><br>
+            <input type="text" name="name" placeholder="e.g. Milk" required
+                style="width:100%; padding:10px; margin:6px 0 14px; border:1px solid #d1d5db; border-radius:6px; box-sizing:border-box;">
 
-        <form method="POST" action="/restock">
+            <label>Category</label><br>
+            <select name="category_id" required
+                style="width:100%; padding:10px; margin:6px 0 14px; border:1px solid #d1d5db; border-radius:6px;">
+                <option value="">-- Select Category --</option>
+                {% for cat in categories %}
+                <option value="{{ cat.id }}">{{ cat.name }}</option>
+                {% endfor %}
+            </select>
 
-            <input type="hidden" name="product_id" id="restockProductId">
+            <label>Price (₹)</label><br>
+            <input type="number" step="0.01" name="price" placeholder="e.g. 50" required
+                style="width:100%; padding:10px; margin:6px 0 14px; border:1px solid #d1d5db; border-radius:6px; box-sizing:border-box;">
 
-            <p id="productName"></p>
+            <label>Initial Stock</label><br>
+            <input type="number" name="quantity" placeholder="e.g. 100" required
+                style="width:100%; padding:10px; margin:6px 0 20px; border:1px solid #d1d5db; border-radius:6px; box-sizing:border-box;">
 
-            <input type="number" name="quantity" placeholder="Add Quantity" required>
-
-            <br><br>
-
-            <button type="submit">Update Stock</button>
-            <button type="button" onclick="closeRestockModal()">Cancel</button>
+            <div style="display:flex; gap:10px;">
+                <button type="submit" class="btn btn-primary" style="flex:1;">Add Product</button>
+                <button type="button" onclick="closeModal()" class="btn" style="flex:1; background:#e5e7eb;">Cancel</button>
+            </div>
 
         </form>
-
     </div>
 </div>
 
-<!--  JS -->
+<!-- RESTOCK MODAL -->
+<div id="restockModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+    <div style="background:white; width:400px; margin:100px auto; padding:30px; border-radius:12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+        <h3 style="margin-top:0;">📦 Restock Product</h3>
+        <form method="POST" action="/restock">
+            <input type="hidden" name="product_id" id="restockProductId">
+            <p id="productName" style="color:#374151; font-weight:600;"></p>
+
+            <label>Quantity to Add</label><br>
+            <input type="number" name="quantity" placeholder="Enter quantity" required
+                style="width:100%; padding:10px; margin:6px 0 20px; border:1px solid #d1d5db; border-radius:6px; box-sizing:border-box;">
+
+            <div style="display:flex; gap:10px;">
+                <button type="submit" class="btn btn-restock" style="flex:1;">Update Stock</button>
+                <button type="button" onclick="closeRestockModal()" class="btn" style="flex:1; background:#e5e7eb;">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
+function openModal() {
+    document.getElementById("addModal").style.display = "block";
+}
+function closeModal() {
+    document.getElementById("addModal").style.display = "none";
+}
 function openRestockModal(id, name) {
     document.getElementById("restockModal").style.display = "block";
     document.getElementById("restockProductId").value = id;
     document.getElementById("productName").innerText = "Product: " + name;
 }
-
 function closeRestockModal() {
     document.getElementById("restockModal").style.display = "none";
 }
+// Close modal if user clicks outside
+window.onclick = function(e) {
+    if (e.target.id === 'addModal') closeModal();
+    if (e.target.id === 'restockModal') closeRestockModal();
+}
 </script>
+
+{% endblock %}
