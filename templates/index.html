@@ -4,14 +4,165 @@
 
 {% block content %}
 
+<!-- Welcome -->
 <div class="card">
     <h2>Welcome to StockFlow 🚀</h2>
     <p>Your smart retail management system starts here.</p>
 </div>
 
-<div class="card">
-    <h3>Today's Sales</h3>
-    <p>₹ 12,450</p>
+<!-- Stats Row -->
+<div class="stats-row">
+
+    <div class="stat-card">
+        <div class="stat-icon">🧾</div>
+        <div>
+            <p class="stat-label">Total Sales</p>
+            <p class="stat-value">₹ {{ "{:,.0f}".format(total_sales) }}</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div>
+            <p class="stat-label">Total Purchase Cost</p>
+            <p class="stat-value">₹ {{ "{:,.0f}".format(total_cost) }}</p>
+        </div>
+    </div>
+
+    <div class="stat-card {% if monthly_profit < 0 %}stat-loss{% else %}stat-profit{% endif %}">
+        <div class="stat-icon">💰</div>
+        <div>
+            <p class="stat-label">Net Profit</p>
+            <p class="stat-value">₹ {{ "{:,.0f}".format(monthly_profit) }}</p>
+        </div>
+    </div>
+
+    <div class="stat-card {% if low_stock_items %}stat-warning{% endif %}">
+        <div class="stat-icon">⚠️</div>
+        <div>
+            <p class="stat-label">Low Stock Items</p>
+            <p class="stat-value">{{ low_stock_items | length }}</p>
+        </div>
+    </div>
+
 </div>
+
+<!-- Charts Row -->
+<div class="charts-row">
+
+    <!-- Sales Trend Chart -->
+    <div class="card chart-card">
+        <h3>📈 Sales Trend (Last 7 Days)</h3>
+        {% if trend_labels %}
+            <canvas id="salesChart"></canvas>
+        {% else %}
+            <p class="no-data">No sales data yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Top Products Chart -->
+    <div class="card chart-card">
+        <h3>🏆 Top Products</h3>
+        {% if top_products %}
+            <canvas id="topChart"></canvas>
+        {% else %}
+            <p class="no-data">No sales data yet.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+<!-- Low Stock Alert Table -->
+{% if low_stock_items %}
+<div class="card">
+    <h3>⚠️ Low Stock Alert</h3>
+    <table>
+        <tr>
+            <th>Product</th>
+            <th>Quantity Left</th>
+            <th>Status</th>
+        </tr>
+        {% for item in low_stock_items %}
+        <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>
+                {% if item.quantity == 0 %}
+                    <span class="badge badge-out">Out of Stock</span>
+                {% elif item.quantity < 5 %}
+                    <span class="badge badge-critical">Critical</span>
+                {% else %}
+                    <span class="badge badge-low">Low</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endif %}
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Sales Trend Line Chart
+    {% if trend_labels %}
+    const salesCtx = document.getElementById('salesChart').getContext('2d');
+    new Chart(salesCtx, {
+        type: 'line',
+        data: {
+            labels: {{ trend_labels | tojson }},
+            datasets: [{
+                label: 'Sales (₹)',
+                data: {{ trend_values | tojson }},
+                borderColor: '#2563eb',
+                backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#2563eb'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: val => '₹' + val.toLocaleString()
+                    }
+                }
+            }
+        }
+    });
+    {% endif %}
+
+    // Top Products Bar Chart
+    {% if top_products %}
+    const topCtx = document.getElementById('topChart').getContext('2d');
+    new Chart(topCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ top_products | map(attribute='name') | list | tojson }},
+            datasets: [{
+                label: 'Units Sold',
+                data: {{ top_products | map(attribute='total_sold') | list | tojson }},
+                backgroundColor: [
+                    '#2563eb', '#7c3aed', '#059669', '#d97706', '#dc2626'
+                ],
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+    {% endif %}
+</script>
 
 {% endblock %}

@@ -132,4 +132,99 @@ tr {
 }
 
 
- 
+ /* ── DASHBOARD STYLES ── */
+
+/* Stats Row */
+.stats-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    flex: 1;
+    min-width: 160px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-left: 4px solid #2563eb;
+}
+
+.stat-card.stat-profit { border-left-color: #059669; }
+.stat-card.stat-loss   { border-left-color: #dc2626; }
+.stat-card.stat-warning { border-left-color: #d97706; }
+
+.stat-icon {
+    font-size: 28px;
+}
+
+.stat-label {
+    margin: 0;
+    font-size: 12px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    margin: 4px 0 0 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
+}
+
+/* Charts Row */
+.charts-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.chart-card {
+    flex: 1;
+    min-width: 280px;
+}
+
+.chart-card h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 15px;
+    color: #374151;
+}
+
+/* Badges */
+.badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-out {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.badge-critical {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.badge-low {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+/* No Data */
+.no-data {
+    color: #9ca3af;
+    font-style: italic;
+    text-align: center;
+    padding: 30px 0;
+}
