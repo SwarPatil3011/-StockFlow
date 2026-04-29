@@ -8,7 +8,61 @@
     <h2>Purchase History 📊</h2>
 </div>
 
+<!-- Summary Stats -->
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-icon">🛒</div>
+        <div>
+            <p class="stat-label">Total Purchases</p>
+            <p class="stat-value">{{ purchases | length }}</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">💸</div>
+        <div>
+            <p class="stat-label">Total Spent</p>
+            <p class="stat-value">₹ {{ "{:,.0f}".format(purchases | sum(attribute='cost')) }}</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div>
+            <p class="stat-label">Items Purchased</p>
+            <p class="stat-value">{{ purchases | sum(attribute='quantity') }}</p>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Purchases -->
+{% if purchases %}
 <div class="card">
+    <h3 style="margin-top:0; color:#374151;">🕐 Recent Purchases</h3>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Supplier</th>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Cost</th>
+            <th>Date</th>
+        </tr>
+        {% for p in purchases[:5] %}
+        <tr style="background:#f0fdf4;">
+            <td><strong>#{{ p.id }}</strong></td>
+            <td>{{ p.supplier }}</td>
+            <td>{{ p.product }}</td>
+            <td>{{ p.quantity }}</td>
+            <td><strong>₹ {{ "{:,.2f}".format(p.cost) }}</strong></td>
+            <td>{{ p.date }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endif %}
+
+<!-- Full History -->
+<div class="card">
+    <h3 style="margin-top:0; color:#374151;">📋 Full Purchase History</h3>
     <table>
         <tr>
             <th>ID</th>
@@ -21,14 +75,22 @@
 
         {% for p in purchases %}
         <tr>
-            <td>{{ p.id }}</td>
+            <td>#{{ p.id }}</td>
             <td>{{ p.supplier }}</td>
             <td>{{ p.product }}</td>
             <td>{{ p.quantity }}</td>
-            <td>₹ {{ p.cost }}</td>
+            <td>₹ {{ "{:,.2f}".format(p.cost) }}</td>
             <td>{{ p.date }}</td>
         </tr>
         {% endfor %}
+
+        {% if purchases | length == 0 %}
+        <tr>
+            <td colspan="6" style="text-align:center; color:#9ca3af; padding:30px;">
+                No purchases yet. Add one from the Purchase page.
+            </td>
+        </tr>
+        {% endif %}
     </table>
 </div>
 

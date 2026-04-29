@@ -5,37 +5,71 @@
 {% block content %}
 
 <div class="card">
-    <h2>Billing Page</h2>
+    <h2>Billing 🧾</h2>
 </div>
 
-<div class="card">
-    <form method="POST">
+<div style="display:flex; gap:20px; flex-wrap:wrap;">
 
-        <label>Select Product:</label><br>
-        <select name="product_id" style="width:100%; padding:8px;">
-            {% for p in products %}
-                <option value="{{ p['id'] }}">
-                    {{ p['name'] }} - ₹{{ p['price'] }}
-                </option>
-            {% endfor %}
-        </select>
+    <!-- Billing Form -->
+    <div class="card" style="flex:1; min-width:300px;">
+        <h3 style="margin-top:0;">Create New Bill</h3>
 
-        <br><br>
+        <form method="POST">
 
-        <label>Quantity:</label><br>
-        <input type="number" name="quantity" required style="width:100%; padding:8px;">
+            <label>Select Product</label><br>
+            <select name="product_id" required
+                style="width:100%; padding:10px; margin:6px 0 16px; border:1px solid #d1d5db; border-radius:6px; font-size:14px;">
+                {% for p in products %}
+                    <option value="{{ p['id'] }}">
+                        {{ p['name'] }} — ₹{{ "{:,.0f}".format(p['price']) }}
+                        (Stock: {{ p['quantity'] }})
+                    </option>
+                {% endfor %}
+            </select>
 
-        <br><br>
+            <label>Quantity</label><br>
+            <input type="number" name="quantity" min="1" required
+                placeholder="Enter quantity"
+                style="width:100%; padding:10px; margin:6px 0 20px; border:1px solid #d1d5db; border-radius:6px; box-sizing:border-box; font-size:14px;">
 
-        <button type="submit" class="btn btn-primary">Calculate</button>
+            {% if message %}
+            <div style="background:#fee2e2; color:#dc2626; padding:10px; border-radius:6px; margin-bottom:16px;">
+                ⚠️ {{ message }}
+            </div>
+            {% endif %}
 
-    </form>
+            <button type="submit" class="btn btn-primary" style="width:100%; padding:12px; font-size:15px;">
+                Generate Bill
+            </button>
+
+        </form>
+    </div>
+
+    <!-- Quick Info Panel -->
+    <div style="flex:1; min-width:260px; display:flex; flex-direction:column; gap:16px;">
+
+        <div class="card" style="border-left: 4px solid #2563eb;">
+            <h4 style="margin:0 0 8px; color:#374151;">💡 How it works</h4>
+            <p style="margin:0; color:#6b7280; font-size:14px; line-height:1.6;">
+                1. Select a product from the dropdown<br>
+                2. Enter the quantity to sell<br>
+                3. Click Generate Bill<br>
+                4. Stock is reduced automatically<br>
+                5. Invoice is created instantly
+            </p>
+        </div>
+
+        {% if total %}
+        <div class="card" style="border-left: 4px solid #059669;">
+            <h4 style="margin:0 0 8px; color:#059669;">✅ Bill Generated!</h4>
+            <p style="margin:0; font-size:22px; font-weight:700; color:#111827;">
+                ₹ {{ "{:,.0f}".format(total) }}
+            </p>
+            <p style="margin:4px 0 0; color:#6b7280; font-size:13px;">Redirecting to invoice...</p>
+        </div>
+        {% endif %}
+
+    </div>
 </div>
-
-{% if total %}
-<div class="card">
-    <h3>Total Amount: ₹ {{ total }}</h3>
-</div>
-{% endif %}
 
 {% endblock %}

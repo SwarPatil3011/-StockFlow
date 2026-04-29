@@ -5,28 +5,100 @@
 {% block content %}
 
 <div class="card">
-    <h2>All Bills</h2>
+    <h2>Bills 🧾</h2>
 </div>
 
+<!-- Recent Bills Summary -->
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-icon">🧾</div>
+        <div>
+            <p class="stat-label">Total Bills</p>
+            <p class="stat-value">{{ bills | length }}</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div>
+            <p class="stat-label">Total Revenue</p>
+            <p class="stat-value">₹ {{ "{:,.0f}".format(bills | sum(attribute='total')) }}</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div>
+            <p class="stat-label">Items Sold</p>
+            <p class="stat-value">{{ bills | sum(attribute='quantity') }}</p>
+        </div>
+    </div>
+</div>
+
+<!-- Recent 5 Bills -->
+{% if bills %}
 <div class="card">
+    <h3 style="margin-top:0; color:#374151;">🕐 Recent Transactions</h3>
     <table>
         <tr>
-            <th>ID</th>
+            <th>Bill ID</th>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Total</th>
+            <th>Date</th>
+            <th>Action</th>
+        </tr>
+        {% for b in bills[-5:] | reverse %}
+        <tr style="background: #f0f9ff;">
+            <td><strong>#{{ b['id'] }}</strong></td>
+            <td>{{ b['name'] }}</td>
+            <td>{{ b['quantity'] }}</td>
+            <td><strong>₹ {{ "{:,.0f}".format(b['total']) }}</strong></td>
+            <td>{{ b['date'] }}</td>
+            <td>
+                <a href="/invoice/{{ b['id'] }}">
+                    <button class="btn btn-primary" style="padding:4px 12px; font-size:12px;">View</button>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endif %}
+
+<!-- Full Bills History -->
+<div class="card">
+    <h3 style="margin-top:0; color:#374151;">📋 All Bills History</h3>
+    <table>
+        <tr>
+            <th>Bill ID</th>
             <th>Product</th>
             <th>Quantity</th>
             <th>Total</th>
             <th>Date</th>
+            <th>Action</th>
         </tr>
 
         {% for b in bills %}
         <tr>
-            <td>{{ b['id'] }}</td>
+            <td>#{{ b['id'] }}</td>
             <td>{{ b['name'] }}</td>
             <td>{{ b['quantity'] }}</td>
-            <td>₹ {{ b['total'] }}</td>
+            <td>₹ {{ "{:,.0f}".format(b['total']) }}</td>
             <td>{{ b['date'] }}</td>
+            <td>
+                <a href="/invoice/{{ b['id'] }}">
+                    <button class="btn btn-edit" style="padding:4px 12px; font-size:12px;">Invoice</button>
+                </a>
+            </td>
         </tr>
         {% endfor %}
+
+        {% if bills | length == 0 %}
+        <tr>
+            <td colspan="6" style="text-align:center; color:#9ca3af; padding:30px;">
+                No bills yet. Create one from the Billing page.
+            </td>
+        </tr>
+        {% endif %}
     </table>
 </div>
 

@@ -32,6 +32,10 @@ body {
     padding: 20px;
     display: flex;
     flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
 }
 
 .sidebar h2 {
@@ -63,11 +67,13 @@ body {
 /* Layout */
 .main {
     display: flex;
+    margin-left: 240px;
 }
 
 .content {
     flex: 1;
     padding: 20px;
+    min-height: 100vh;
 }
 
 /* Top bar */

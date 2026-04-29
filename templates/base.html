@@ -20,6 +20,7 @@ This is called : Template inheritance (Jinja)"-->
         <div>
             <a href="/dashboard" class="{% if request.path == '/dashboard'%}active{% endif %}">Dashboard</a>
             <a href="/products" class="{% if request.path == '/Products'%}active{% endif %}">Products</a>
+            <a href="/categories" class="{% if request.path == '/categories' %}active{% endif %}">Categories</a>
             <a href="/billing" class="{% if request.path == '/billing'%}active{% endif %}">Billing</a>
             <a href="/bills" class="{% if request.path == '/bills'%}active{% endif %}">Bills</a>
             <a href="/purchase" class="{% if request.path == '/purchase'%}active{% endif %}">Purchase</a>
