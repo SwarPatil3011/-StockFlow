@@ -7,7 +7,7 @@ This is called : Template inheritance (Jinja)"-->
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{% block title %}{% endblock %}</title>
+    <title>{% block title %}{% endblock %} | Invenzo </title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
@@ -15,7 +15,7 @@ This is called : Template inheritance (Jinja)"-->
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <h2>StockFlow</h2>
+        <h2>Invenzo</h2>
 
         <div>
             <a href="/dashboard" class="{% if request.path == '/dashboard'%}active{% endif %}">Dashboard</a>

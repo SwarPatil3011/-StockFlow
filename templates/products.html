@@ -46,7 +46,7 @@
             <td>
                 <span class="cat-badge">{{ product.category_name or '—' }}</span>
             </td>
-            <td>₹ {{ "%.0f"|format(product.price) }}</td>  # Display price without decimal places
+            <td>₹ {{ "%.0f"|format(product.price) }}</td>  <!-- Display price without decimal places -->
             <td>
                 {% if product.quantity == 0 %}
                     <span style="color:red; font-weight:bold;">{{ product.quantity }} (Out of Stock)</span>

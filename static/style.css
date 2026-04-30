@@ -67,12 +67,12 @@ body {
 /* Layout */
 .main {
     display: flex;
-    margin-left: 240px;
+    margin-left: 280px;
 }
 
 .content {
     flex: 1;
-    padding: 20px;
+    padding: 30px;
     min-height: 100vh;
 }
 
