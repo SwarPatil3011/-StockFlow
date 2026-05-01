@@ -1,39 +1,98 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Invoice</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
+    <title>Invoice #{{ bill['id'] }} — Invenzo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
+<div class="invoice-wrapper">
 
-    <div class="navbar">
-    <a href="/" style="color:white; text-decoration:none;">Dashboard</a> |
-    <a href="/products" style="color:white; text-decoration:none;">Products</a> |
-    <a href="/billing" style="color:white; text-decoration:none;">Billing</a> |
-     <a href="/bills" style="color:white; text-decoration:none;">Bills</a>
+    <!-- Header -->
+    <div class="invoice-header">
+        <div class="invoice-brand">
+            <div class="invoice-brand-icon">📦</div>
+            <div>
+                <div class="invoice-brand-name">Invenzo</div>
+                <div class="invoice-brand-sub">Retail & Inventory System</div>
+            </div>
+        </div>
+        <div class="invoice-title">
+            <h1>INVOICE</h1>
+            <p>#{{ bill['id'] }}</p>
+        </div>
+    </div>
+
+    <!-- Body -->
+    <div class="invoice-body">
+
+        <!-- Meta Info -->
+        <div class="invoice-meta">
+            <div class="invoice-meta-block">
+                <h4>Invoice Number</h4>
+                <p>#{{ bill['id'] }}</p>
+            </div>
+            <div class="invoice-meta-block">
+                <h4>Date</h4>
+                <p>{{ bill['date'] }}</p>
+            </div>
+            <div class="invoice-meta-block">
+                <h4>Status</h4>
+                <p><span class="invoice-status">✓ Paid</span></p>
+            </div>
+            <div class="invoice-meta-block">
+                <h4>Issued By</h4>
+                <p>Invenzo</p>
+                <p class="sub">Retail & Inventory</p>
+            </div>
+        </div>
+
+        <!-- Items Table -->
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td><strong>{{ bill['name'] }}</strong></td>
+                    <td>{{ bill['quantity'] }}</td>
+                    <td>₹ {{ "{:,.0f}".format(bill['total'] / bill['quantity']) }}</td>
+                    <td><strong>₹ {{ "{:,.0f}".format(bill['total']) }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Total -->
+        <div class="invoice-total">
+            <div>
+                <div class="invoice-total-label">Total Amount</div>
+                <div class="invoice-total-sub">Inclusive of all taxes</div>
+            </div>
+            <div class="invoice-total-amount">₹ {{ "{:,.0f}".format(bill['total']) }}</div>
+        </div>
+
+        <!-- Footer -->
+        <div class="invoice-footer">
+            <p>Thank you for your purchase! 🎉</p>
+            <p>Invenzo v1.0 &nbsp;·&nbsp; Retail & Inventory Management System</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="invoice-actions">
+            <button class="btn-print" onclick="window.print()">🖨️ Print Invoice</button>
+            <a href="/billing" class="btn-outline">+ New Sale</a>
+            <a href="/bills" class="btn-outline">📋 All Bills</a>
+            <a href="/dashboard" class="btn-outline">🏠 Dashboard</a>
+        </div>
+
+    </div>
 </div>
-
-<h2>Invoice 🧾</h2>
-
-<p><b>Bill ID:</b> {{ bill['id'] }}</p>
-<p><b>Product:</b> {{ bill['name'] }}</p>
-<p><b>Quantity:</b> {{ bill['quantity'] }}</p>
-<p><b>Total:</b> ₹{{ bill['total'] }}</p>
-<p><b>Date:</b> {{ bill['date'] }}</p>
-
-<hr>
-
-<button onclick="window.print()">Print Invoice</button>
-
-<br><br>
-
-<a href="/billing">
-    <button>New Sale</button>
-</a>
-
-<a href="/dashboard">
-    <button>Dashboard</button>
-</a>
-
 </body>
 </html>
