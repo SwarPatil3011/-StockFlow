@@ -222,6 +222,21 @@ def edit_product(id):
 
     return render_template("edit_product.html", product=product, categories=categories)
 
+@app.route("/delete_product/<int:id>", methods=["POST"])
+def delete_product(id):
+    if 'user' not in session:
+        return redirect('/login')
+
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute("DELETE FROM products WHERE id = %s", (id,))
+    db.commit()
+
+    cursor.close()
+    db.close()
+
+    return redirect("/products")
 
 @app.route("/update_product/<int:id>", methods=["POST"])
 def update_product(id):
