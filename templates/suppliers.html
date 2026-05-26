@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Suppliers{% endblock %}
+
+{% block content %}
+
+<div class="card">
+    <h2>Suppliers 🏭</h2>
+</div>
+
+<!-- Add New Supplier -->
+<div class="card" style="max-width:500px;">
+    <h3 style="margin-top:0;">Add New Supplier</h3>
+    <form method="POST" action="/add_supplier">
+
+        <label>Supplier Name</label><br>
+        <input type="text" name="name" placeholder="e.g. Amul Distributor" required
+            style="width:100%; padding:10px; margin:6px 0 14px; border:1px solid #d1d5db; border-radius:6px; box-sizing:border-box;">
+
+        <label>Phone Number</label><br>
+        <input type="text" name="phone" placeholder="e.g. 9876543210"
+            style="width:100%; padding:10px; margin:6px 0 20px; border:1px solid #d1d5db; border-radius:6px; box-sizing:border-box;">
+
+        {% if error %}
+        <div style="background:#fee2e2; color:#dc2626; padding:10px; border-radius:6px; margin-bottom:14px; border-left:3px solid #dc2626;">
+            ⚠️ {{ error }}
+        </div>
+        {% endif %}
+
+        {% if success %}
+        <div style="background:#dcfce7; color:#16a34a; padding:10px; border-radius:6px; margin-bottom:14px; border-left:3px solid #16a34a;">
+            ✅ {{ success }}
+        </div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary">Add Supplier</button>
+    </form>
+</div>
+
+<!-- Suppliers Table -->
+<div class="card">
+    <h3 style="margin-top:0;">All Suppliers</h3>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Products</th>
+            <th>Action</th>
+        </tr>
+
+        {% for s in suppliers %}
+        <tr>
+            <td>{{ s.id }}</td>
+            <td><strong>{{ s.name }}</strong></td>
+            <td>{{ s.phone or '—' }}</td>
+            <td>
+                <span style="background:#eff6ff; color:#1d4ed8; padding:3px 10px; border-radius:12px; font-size:12px; font-weight:500;">
+                    {{ s.product_count }} products
+                </span>
+            </td>
+            <td>
+                <button onclick="openEditModal({{ s.id }}, '{{ s.name }}', '{{ s.phone or '' }}')"
+                    class="btn btn-edit">Edit</button>
+                <form method="POST" action="/delete_supplier/{{ s.id }}" style="display:inline;"
+                    onsubmit="return confirm('Delete {{ s.name }}?')">
+                    <button type="submit" class="btn btn-delete">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+
+        {% if suppliers|length == 0 %}
+        <tr>
+            <td colspan="5" style="text-align:center; color:#9ca3af; padding:30px;">
+                No suppliers yet.
+            </td>
+        </tr>
+        {% endif %}
+    </table>
+</div>
+
+<!-- Edit Modal -->
+<div id="editModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+    <div style="background:white; width:400px; margin:100px auto; padding:30px; border-radius:12px; box-shadow:0 10px 40px rgba(0,0,0,0.2);">
+        <h3 style="margin-top:0;">✏️ Edit Supplier</h3>
+        <form method="POST" id="editForm">
+            <label>Supplier Name</label><br>
+            <input type="text" name="name" id="editName" required
+                style="width:100%; padding:10px; margin:6px 0 14px; border:1px solid #d1d5db; border-radius:6px; box-sizing:border-box;">
+
+            <label>Phone Number</label><br>
+            <input type="text" name="phone" id="editPhone"
+                style="width:100%; padding:10px; margin:6px 0 20px; border:1px solid #d1d5db; border-radius:6px; box-sizing:border-box;">
+
+            <div style="display:flex; gap:10px;">
+                <button type="submit" class="btn btn-primary" style="flex:1;">Save Changes</button>
+                <button type="button" onclick="closeEditModal()" class="btn" style="flex:1; background:#e5e7eb;">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openEditModal(id, name, phone) {
+    document.getElementById('editModal').style.display = 'block';
+    document.getElementById('editName').value = name;
+    document.getElementById('editPhone').value = phone;
+    document.getElementById('editForm').action = '/edit_supplier/' + id;
+}
+
+function closeEditModal() {
+    document.getElementById('editModal').style.display = 'none';
+}
+
+window.onclick = function(e) {
+    if (e.target.id === 'editModal') closeEditModal();
+}
+</script>
+
+{% endblock %}

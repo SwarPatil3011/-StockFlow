@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users{% endblock %}
+
+{% block content %}
+
+<div class="card">
+    <h2>Manage Users 👥</h2>
+</div>
+
+<!-- Add New User -->
+<div class="card" style="max-width: 500px;">
+    <h3 style="margin-top:0;">Add New User</h3>
+
+    <form method="POST" action="/add_user">
+
+        <label>Username</label><br>
+        <input type="text" name="username" placeholder="Enter username" required
+            style="width:100%; padding:10px; margin:6px 0 14px; border:1px solid #d1d5db; border-radius:6px; box-sizing:border-box;">
+
+        <label>Password</label><br>
+        <input type="password" name="password" placeholder="Enter password" required
+            style="width:100%; padding:10px; margin:6px 0 14px; border:1px solid #d1d5db; border-radius:6px; box-sizing:border-box;">
+
+        <label>Role</label><br>
+        <select name="role" required
+            style="width:100%; padding:10px; margin:6px 0 20px; border:1px solid #d1d5db; border-radius:6px;">
+            <option value="staff">Staff</option>
+            <option value="admin">Admin</option>
+        </select>
+
+        {% if error %}
+        <div style="background:#fee2e2; color:#dc2626; padding:10px; border-radius:6px; margin-bottom:14px; border-left:3px solid #dc2626;">
+            ⚠️ {{ error }}
+        </div>
+        {% endif %}
+
+        {% if success %}
+        <div style="background:#dcfce7; color:#16a34a; padding:10px; border-radius:6px; margin-bottom:14px; border-left:3px solid #16a34a;">
+            ✅ {{ success }}
+        </div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary">Add User</button>
+
+    </form>
+</div>
+
+<!-- Users Table -->
+<div class="card">
+    <h3 style="margin-top:0;">All Users</h3>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Action</th>
+        </tr>
+
+        {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>
+                {% if user.role == 'admin' %}
+                    <span style="background:#dbeafe; color:#1d4ed8; padding:3px 10px; border-radius:12px; font-size:12px; font-weight:600;">Admin</span>
+                {% else %}
+                    <span style="background:#f3f4f6; color:#374151; padding:3px 10px; border-radius:12px; font-size:12px; font-weight:600;">Staff</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if user.username != session['user'] %}
+                <form method="POST" action="/delete_user/{{ user.id }}" style="display:inline;"
+                    onsubmit="return confirm('Delete user {{ user.username }}?')">
+                    <button type="submit" class="btn btn-delete">Delete</button>
+                </form>
+                {% else %}
+                <span style="color:#9ca3af; font-size:13px;">Current user</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+
+        {% if users|length == 0 %}
+        <tr>
+            <td colspan="4" style="text-align:center; color:#9ca3af; padding:30px;">
+                No users found.
+            </td>
+        </tr>
+        {% endif %}
+    </table>
+</div>
+
+{% endblock %}

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Invoice #{{ bill['id'] }} — Invenzo</title>
+    <title>Invoice #{{ bill.id }} — Invenzo</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232563eb'/><text x='50' y='72' font-size='55' font-family='Segoe UI,Arial' font-weight='900' fill='white' text-anchor='middle'>I</text></svg>">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
@@ -19,7 +20,7 @@
         </div>
         <div class="invoice-title">
             <h1>INVOICE</h1>
-            <p>#{{ bill['id'] }}</p>
+            <p>#{{ bill.id }}</p>
         </div>
     </div>
 
@@ -30,11 +31,11 @@
         <div class="invoice-meta">
             <div class="invoice-meta-block">
                 <h4>Invoice Number</h4>
-                <p>#{{ bill['id'] }}</p>
+                <p>#{{ bill.id }}</p>
             </div>
             <div class="invoice-meta-block">
                 <h4>Date</h4>
-                <p>{{ bill['date'] }}</p>
+                <p>{{ bill.date }}</p>
             </div>
             <div class="invoice-meta-block">
                 <h4>Status</h4>
@@ -55,27 +56,29 @@
                     <th>Product</th>
                     <th>Quantity</th>
                     <th>Unit Price</th>
-                    <th>Total</th>
+                    <th>Subtotal</th>
                 </tr>
             </thead>
             <tbody>
+                {% for item in items %}
                 <tr>
-                    <td>1</td>
-                    <td><strong>{{ bill['name'] }}</strong></td>
-                    <td>{{ bill['quantity'] }}</td>
-                    <td>₹ {{ "{:,.0f}".format(bill['total'] / bill['quantity']) }}</td>
-                    <td><strong>₹ {{ "{:,.0f}".format(bill['total']) }}</strong></td>
+                    <td>{{ loop.index }}</td>
+                    <td><strong>{{ item.product_name }}</strong></td>
+                    <td>{{ item.quantity }}</td>
+                    <td>₹ {{ "{:,.0f}".format(item.price) }}</td>
+                    <td><strong>₹ {{ "{:,.0f}".format(item.subtotal) }}</strong></td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
 
         <!-- Total -->
         <div class="invoice-total">
             <div>
-                <div class="invoice-total-label">Total Amount</div>
-                <div class="invoice-total-sub">Inclusive of all taxes</div>
+                <div class="invoice-total-label">Grand Total</div>
+                <div class="invoice-total-sub">{{ items | length }} item(s) · Inclusive of all taxes</div>
             </div>
-            <div class="invoice-total-amount">₹ {{ "{:,.0f}".format(bill['total']) }}</div>
+            <div class="invoice-total-amount">₹ {{ "{:,.0f}".format(bill.total) }}</div>
         </div>
 
         <!-- Footer -->

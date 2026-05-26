@@ -16,12 +16,23 @@
             style="width:100%; padding:10px; margin:6px 0 14px; border:1px solid #d1d5db; border-radius:6px; box-sizing:border-box;">
 
         <label>Category</label><br>
-        <select name="category_id" required
+        <select name="category_id"
             style="width:100%; padding:10px; margin:6px 0 14px; border:1px solid #d1d5db; border-radius:6px;">
             <option value="">-- Select Category --</option>
             {% for cat in categories %}
             <option value="{{ cat.id }}" {% if cat.id == product.category_id %}selected{% endif %}>
                 {{ cat.name }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label>Supplier</label><br>
+        <select name="supplier_id"
+            style="width:100%; padding:10px; margin:6px 0 14px; border:1px solid #d1d5db; border-radius:6px;">
+            <option value="">-- Select Supplier --</option>
+            {% for s in suppliers %}
+            <option value="{{ s.id }}" {% if s.id == product.supplier_id %}selected{% endif %}>
+                {{ s.name }}
             </option>
             {% endfor %}
         </select>

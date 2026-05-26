@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login — Invenzo</title>
+    <title>Register — Invenzo</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         * {
@@ -103,7 +103,18 @@
             border-left: 3px solid #dc2626;
         }
 
-        .login-btn {
+        .success-msg {
+            background: rgba(220, 252, 231, 0.8);
+            color: #16a34a;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 16px;
+            text-align: left;
+            border-left: 3px solid #16a34a;
+        }
+
+        .register-btn {
             width: 100%;
             padding: 12px;
             background: #1e3a5f;
@@ -118,17 +129,29 @@
             letter-spacing: 0.3px;
         }
 
-        .login-btn:hover {
-            background: #1e4fb9;
+        .register-btn:hover {
+            background: #2563eb;
             transform: translateY(-1px);
         }
 
-        .login-btn:active {
-            transform: translateY(0);
+        .login-link {
+            margin-top: 20px;
+            font-size: 13px;
+            color: #475569;
+        }
+
+        .login-link a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
         }
 
         .login-footer {
-            margin-top: 20px;
+            margin-top: 16px;
             font-size: 11px;
             color: #64748b;
         }
@@ -141,42 +164,46 @@
 
         <div class="brand-icon">📦</div>
 
-        <h2>Welcome back</h2>
-        <p>Sign in to your Invenzo account</p>
+        <h2>Create Account</h2>
+        <p>Register to access Invenzo</p>
 
         {% if error %}
         <div class="error-msg">⚠️ {{ error }}</div>
         {% endif %}
 
-        <form method="POST" action="/login">
+        {% if success %}
+        <div class="success-msg">✅ {{ success }}</div>
+        {% endif %}
+
+        <form method="POST" action="/register">
 
             <div class="form-group">
                 <label>Username</label>
-                <input type="text" name="username" placeholder="Enter your username" required>
+                <input type="text" name="username" placeholder="Choose a username" required>
             </div>
 
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" name="password" placeholder="Enter your password" required>
+                <input type="password" name="password" placeholder="Choose a password" required>
             </div>
 
-            <button type="submit" class="login-btn">Sign In →</button>
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" name="confirm_password" placeholder="Repeat your password" required>
+            </div>
+
+            <button type="submit" class="register-btn">Create Account →</button>
 
         </form>
 
+        <div class="login-link">
+            Already have an account? <a href="/login">Sign In</a>
+        </div>
+
         <div class="login-footer">
-            Invenzo v1.0 &nbsp;|&nbsp; Retail & Inventory System
+            Invenzo v1.0 &nbsp;·&nbsp; Retail & Inventory System
         </div>
 
     </div>
 </body>
-
-<script>
-document.querySelector('form').addEventListener('submit', function() {
-    const btn = document.querySelector('.login-btn');
-    btn.textContent = 'Signing in...';
-    btn.disabled = true;
-});
-</script>
-
 </html>
